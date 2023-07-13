@@ -3,6 +3,7 @@ import { Button, ButtonGroup } from "@mui/material";
 import FilterInput from "../FilterInput";
 import NoteButton from "../NoteButton";
 import "./index.css";
+import { startTransition } from "react";
 
 function NotesList({
   notes,
@@ -11,14 +12,20 @@ function NotesList({
   onNewNotesRequested,
   onDeleteAllRequested,
 }) {
+  const [filterInputValue, setFilterInputValue] = useState("");
   const [filter, setFilter] = useState("");
 
   return (
     <div className="notes-list" style={{ position: "relative" }}>
       <div className="notes-list__filter">
         <FilterInput
-          filter={filter}
-          onChange={setFilter}
+          filter={filterInputValue}
+          onChange={(value) => {
+            setFilterInputValue(value)
+            startTransition(() => {
+              setFilter(value)
+            })
+          }}
           noteCount={Object.keys(notes).length}
         />
       </div>
