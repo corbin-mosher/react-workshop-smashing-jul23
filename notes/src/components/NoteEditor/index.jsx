@@ -3,6 +3,7 @@ import CodeMirror from "codemirror";
 import "codemirror/mode/markdown/markdown";
 import "codemirror/lib/codemirror.css";
 import "./index.css";
+import { debounce } from 'lodash'
 
 function NoteEditor({ notes, activeNoteId, saveNote }) {
   const currentNote = notes[activeNoteId];
@@ -23,9 +24,13 @@ function NoteEditor({ notes, activeNoteId, saveNote }) {
   useEffect(() => {
     if (!editorRef.current) return;
 
+    const debouncedSaveNote = debounce((doc) => {
+      saveNote({ text: doc.getValue() });
+    }, 300)
+
     const eventListener = (doc, change) => {
       if (change.origin !== "setValue") {
-        saveNote({ text: doc.getValue() });
+        debouncedSaveNote(doc)
       }
     };
 
